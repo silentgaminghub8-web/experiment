@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournaments - Silent Gamers</title>
+    <link rel="stylesheet" href="/SILENT_GAMERS_V2/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+    <!-- Full Screen Loader (Common Element) -->
+    <div id="page-loader" class="loader-overlay hidden">
+        <i class="fas fa-spinner fa-spin"></i>
+    </div>
+    
+    <!-- Header (Common Element) -->
+    <header class="site-header" id="header">
+        <div class="header-logo">
+            <a href="/SILENT_GAMERS_V2/pages/tournament.html">
+                <img src="https://ik.imagekit.io/silentgamers/Picsart_25-09-19_15-42-42-048.png?updatedAt=1758287984590&ik-s=818768f764ed7e928bf055f4f632c881cb77ec24" alt="Logo">
+            </a>
+        </div>
+        <div class="header-title"><h1>SILENT GAMERS</h1></div>
+        <button class="menu-trigger" id="menu-trigger">
+            <span></span><span></span><span></span>
+        </button>
+    </header>
+
+    <!-- Navigation Menu (Common Element) -->
+    <nav class="slide-nav" id="slide-nav">
+        <ul>
+            <li><a href="/SILENT_GAMERS_V2/pages/tournament.html">Tournaments</a></li>
+            <li><a href="/SILENT_GAMERS_V2/pages/profile.html">My Profile</a></li>
+            <li><a href="/SILENT_GAMERS_V2/pages/shop.html">Shop</a></li>
+            <li><a href="/SILENT_GAMERS_V2/pages/ceo.html">CEO</a></li>
+            <li><a href="/SILENT_GAMERS_V2/pages/tutorial.html">Tutorials</a></li>
+        </ul>
+        <div class="nav-footer">
+            <button id="logout-btn" class="logout-btn hidden">Log Out</button>
+        </div>
+    </nav>
+
+    <!-- Page Specific Content -->
+    <main class="main-container">
+        
+        <!-- Welcome Section -->
+        <section class="welcome-header">
+            <h2>Welcome, <span id="welcome-username">Player</span>!</h2>
+            <p>Ready to battle? Check out today's tournaments below.</p>
+        </section>
+
+        <!-- Wallet/Token Display Section -->
+        <section class="wallet-display">
+            <div class="token-box" id="red-token-box">
+                <h3>Red Token</h3>
+                <p class="balance" id="red-token-balance"><i class="fas fa-spinner fa-spin"></i></p>
+            </div>
+            <div class="token-box" id="blue-token-box">
+                <h3>Blue Token</h3>
+                <p class="balance" id="blue-token-balance"><i class="fas fa-spinner fa-spin"></i></p>
+            </div>
+            <div class="token-box" id="power-coin-box">
+                <h3>Power Coin</h3>
+                <p class="balance" id="power-coin-balance"><i class="fas fa-spinner fa-spin"></i></p>
+            </div>
+        </section>
+
+        <!-- Tab Buttons for Tournament Types -->
+        <div class="tab-buttons">
+            <button class="tab-btn active" data-tab="normal">Normal</button>
+            <button class="tab-btn" data-tab="power">Power</button>
+        </div>
+
+        <!-- Container for Tournament Cards -->
+        <div id="tournaments-container">
+            <!-- Normal Tournaments (will be loaded by JS) -->
+            <div id="normal-tournaments" class="tournaments-grid tab-content active">
+                <!-- JS will populate this -->
+            </div>
+            <!-- Power Tournaments (will be loaded by JS) -->
+            <div id="power-tournaments" class="tournaments-grid tab-content">
+                <!-- JS will populate this -->
+            </div>
+        </div>
+
+    </main>
+    
+    <!-- Footer (Common Element) -->
+    <footer class="site-footer">
+        <div class="social-links">
+            <a href="https://www.instagram.com/silent.gamers?igsh=MWN6bGdsdzhyb3Nicw==" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.youtube.com/@SilentGaminghub1" target="_blank"><i class="fab fa-youtube"></i></a>
+        </div>
+    </footer>
+
+    <!-- MODAL POP-UP for messages -->
+    <div id="modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button id="modal-close-btn" class="modal-close">&times;</button>
+            <h3 id="modal-title">Notification</h3>
+            <p id="modal-message"></p>
+        </div>
+    </div>
+
+    <!-- Page Specific JavaScript -->
+    <script type="module" src="/SILENT_GAMERS_V2/assets/js/tournament.js"></script>
+
+</body>
+</html>
