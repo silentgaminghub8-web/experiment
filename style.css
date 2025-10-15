@@ -329,3 +329,173 @@ a {
         width: 80%;
     }
 }
+/* --- 7. TOURNAMENT PAGE SPECIFIC STYLES --- */
+
+.welcome-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+.welcome-header h2 {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    color: var(--color-silver);
+    margin-bottom: 10px;
+}
+.welcome-header p {
+    font-size: 1.1rem;
+    color: #aaa;
+}
+
+.wallet-display {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+}
+.token-box {
+    background: var(--color-dark-grey);
+    border: 1px solid var(--color-silver);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    min-width: 180px;
+}
+.token-box h3 {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+.token-box .balance {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-yellow-accent);
+}
+
+.tab-buttons {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.tab-btn {
+    background: transparent;
+    color: var(--color-silver);
+    border: 2px solid var(--color-silver);
+    padding: 10px 30px;
+    margin: 0 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: var(--font-heading);
+    border-radius: 8px;
+}
+.tab-btn.active {
+    background: var(--color-silver);
+    color: var(--color-black);
+    box-shadow: 0 0 15px var(--color-silver);
+}
+
+.tournaments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.tab-content {
+    display: none;
+}
+.tab-content.active {
+    display: grid; /* Changed from block to grid */
+}
+
+.tournament-card {
+    background: var(--color-dark-grey);
+    border: 1px solid var(--color-silver);
+    border-radius: 15px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.tournament-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(192, 192, 192, 0.1);
+}
+
+.card-header img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-info h4 {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+}
+.card-info p {
+    margin-bottom: 8px;
+    color: #ccc;
+}
+.card-info .fee {
+    font-weight: bold;
+    color: var(--color-yellow-accent);
+}
+
+.card-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+.card-btn {
+    flex: 1;
+    padding: 10px;
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+    transition: all 0.3s;
+}
+.join-btn, .start-btn {
+    background-color: var(--color-yellow-accent);
+    color: var(--color-black);
+    border: none;
+}
+.join-btn.add-tokens {
+    background-color: var(--color-red-error);
+    color: white;
+}
+.join-btn.joined {
+    background-color: var(--color-green-success);
+    color: white;
+    cursor: not-allowed;
+}
+.rules-btn {
+    background: transparent;
+    border: 1px solid var(--color-silver);
+    color: var(--color-silver);
+}
+
+/* MODAL STYLES */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8);
+    z-index: 2000; display: flex; justify-content: center; align-items: center;
+}
+.modal-content {
+    background: var(--color-dark-grey); padding: 30px; border-radius: 10px;
+    border: 2px solid var(--color-silver); width: 90%; max-width: 500px; position: relative;
+    text-align: center;
+}
+.modal-close {
+    position: absolute; top: 10px; right: 15px; background: none; border: none;
+    color: white; font-size: 2rem; cursor: pointer;
+}
