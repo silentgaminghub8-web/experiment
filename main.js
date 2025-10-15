@@ -1,5 +1,5 @@
 /* =================================================================
-   SILENT GAMERS V2 - MAIN UI SCRIPT (main.js)
+   SILENT GAMERS V2 - MAIN UI SCRIPT (main.js) - Final Updated Version
    ================================================================= */
 import { checkSession, logout } from './auth.js';
 
@@ -8,16 +8,21 @@ import { checkSession, logout } from './auth.js';
 const menuTrigger = document.getElementById('menu-trigger');
 const slideNav = document.getElementById('slide-nav');
 const logoutBtn = document.getElementById('logout-btn');
-const pageLoader = document.getElementById('page-loader'); // Hum yeh loader har page par add karenge
+const pageLoader = document.getElementById('page-loader');
+
+// --- Confirmation Modal Elements ---
+const confirmationModal = document.getElementById('confirmation-modal');
+const confirmYesBtn = document.getElementById('confirm-yes-btn');
+const confirmNoBtn = document.getElementById('confirm-no-btn');
 
 // --- B. LOADER FUNCTIONS ---
 // In functions ko hum kisi bhi file se call kar sakte hain loader dikhane/chhupane ke liye.
 export function showLoader() {
-    if (pageLoader) pageLoader.classList.remove('hidden');
+    if (pageLoader) page-loader.classList.remove('hidden');
 }
 
 export function hideLoader() {
-    if (pageLoader) pageLoader.classList.add('hidden');
+    if (pageLoader) page-loader.classList.add('hidden');
 }
 
 // --- C. HEADER & NAVIGATION LOGIC ---
@@ -28,12 +33,32 @@ function initializeHeader() {
         });
     }
 
+    // --- Logout Button Logic (using custom modal) ---
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
-            // Confirmation maango logout se pehle
-            if (confirm("Are you sure you want to log out?")) {
-                showLoader();
-                logout(); // auth.js se logout function call hoga
+            // Ab hum seedha custom modal dikhayenge
+            if (confirmationModal) {
+                confirmationModal.classList.remove('hidden');
+            }
+        });
+    }
+    
+    // --- Confirmation Modal Button Logic ---
+    if (confirmYesBtn) {
+        confirmYesBtn.addEventListener('click', () => {
+            // Modal ko chhupa do aur loader dikhao
+            if (confirmationModal) confirmationModal.classList.add('hidden');
+            showLoader();
+            // auth.js se logout function call hoga
+            logout(); 
+        });
+    }
+
+    if (confirmNoBtn) {
+        confirmNoBtn.addEventListener('click', () => {
+            // Bas modal ko chhupa do
+            if (confirmationModal) {
+                confirmationModal.classList.add('hidden');
             }
         });
     }
