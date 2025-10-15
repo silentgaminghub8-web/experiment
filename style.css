@@ -869,3 +869,49 @@ a {
     height: 100%;
     border: 0;
 }
+/* --- 13. CONFIRMATION MODAL STYLES --- */
+
+.confirmation-modal-content {
+    max-width: 400px; /* Chota modal */
+}
+
+.confirmation-modal-content h3 {
+    font-family: var(--font-heading);
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+.confirmation-modal-content p {
+    color: #ccc;
+    margin-bottom: 25px;
+}
+
+.confirmation-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.confirm-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    font-family: var(--font-heading);
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.confirm-btn:hover {
+    transform: scale(1.05);
+}
+
+.confirm-btn.yes {
+    background-color: var(--color-red-error);
+    color: var(--color-white);
+}
+
+.confirm-btn.no {
+    background-color: var(--color-silver);
+    color: var(--color-black);
+}
