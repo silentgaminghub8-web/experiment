@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Silent Gamers</title>
+    <link rel="stylesheet" href="/SILENT_GAMERS_V2/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+    <!-- Full Screen Loader (Common Element) -->
+    <div id="page-loader" class="loader-overlay hidden">
+        <i class="fas fa-spinner fa-spin"></i>
+    </div>
+    
+    <!-- Header (Common Element) -->
+    <header class="site-header" id="header">
+        <div class="header-logo">
+            <a href="/SILENT_GAMERS_V2/pages/tournament.html">
+                <img src="https://ik.imagekit.io/silentgamers/Picsart_25-09-19_15-42-42-048.png?updatedAt=1758287984590&ik-s=818768f764ed7e928bf055f4f632c881cb77ec24" alt="Logo">
+            </a>
+        </div>
+        <div class="header-title"><h1>SILENT GAMERS</h1></div>
+        <button class="menu-trigger" id="menu-trigger">
+            <span></span><span></span><span></span>
+        </button>
+    </header>
+
+    <!-- Navigation Menu (Common Element) -->
+    <nav class="slide-nav" id="slide-nav">
+        <ul>
+            <li><a href="/SILENT_GAMERS_V2/pages/tournament.html">Tournaments</a></li>
+            <li><a href="/SILENT_GAMERS_V2/pages/profile.html">My Profile</a></li>
+            <li><a href="/SILENT_GAMERS_V2/pages/shop.html">Shop</a></li>
+            <li><a href="/SILENT_GAMERS_V2/pages/ceo.html">CEO</a></li>
+            <li><a href="/SILENT_GAMERS_V2/pages/tutorial.html">Tutorials</a></li>
+        </ul>
+        <div class="nav-footer">
+            <button id="logout-btn" class="logout-btn hidden">Log Out</button>
+        </div>
+    </nav>
+
+    <!-- Page Specific Content -->
+    <main class="main-container">
+        
+        <section class="profile-section">
+            <div class="profile-header">
+                <img src="https://ik.imagekit.io/silentgamers/6d37cee8dd5105cda3fb25fa287c1819.jpg?updatedAt=1760167768059&ik-s=47f862d8c94abb4a628fcb722d38992f87cd6c88" alt="Profile Avatar" class="profile-avatar">
+                <h2 id="profile-username">Loading...</h2>
+                <p id="profile-game-name">Game Name: Loading...</p>
+            </div>
+
+            <div class="profile-details-grid">
+                <div class="detail-item">
+                    <span class="label">User ID</span>
+                    <span class="value" id="profile-userid">Loading...</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Mobile Number</span>
+                    <span class="value" id="profile-mobile">Loading...</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Email Address</span>
+                    <span class="value" id="profile-email">Loading...</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Game UID</span>
+                    <span class="value" id="profile-gameuid">Loading...</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">UPI ID for Payouts</span>
+                    <span class="value" id="profile-upi">Loading...</span>
+                </div>
+            </div>
+            
+            <!-- Future features can go here, like a "Change Password" button -->
+
+        </section>
+
+    </main>
+    
+    <!-- Footer (Common Element) -->
+    <footer class="site-footer">
+        <div class="social-links">
+            <a href="https://www.instagram.com/silent.gamers?igsh=MWN6bGdsdzhyb3Nicw==" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.youtube.com/@SilentGaminghub1" target="_blank"><i class="fab fa-youtube"></i></a>
+        </div>
+    </footer>
+
+    <!-- Page Specific JavaScript -->
+    <script type="module" src="/SILENT_GAMERS_V2/assets/js/profile.js"></script>
+
+</body>
+</html>
