@@ -1,0 +1,92 @@
+<!DOCTYPE
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop - Silent Gamers</title>
+    <link rel="stylesheet" href="/SILENT_GAMERS_V2/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1.css">
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+</head>
+<body>
+
+    <!-- Common Elements -->
+    <div id="page-loader" class="loader-overlay hidden"><i class="fas fa-spinner fa-spin"></i></div>
+    <header class="site-header" id="header">
+        <div class="header-logo"><a href="/SILENT_GAMERS_V2/pages/tournament.html"><img src="https://ik.imagekit.io/silentgamers/Picsart_25-09-19_15-42-42-048.png?updatedAt=1758287984590&ik-s=818768f764ed7e928bf055f4f632c881cb77ec24" alt="Logo"></a></div>
+        <div class="header-title"><h1>SILENT GAMERS</h1></div>
+        <button class="menu-trigger" id="menu-trigger"><span></span><span></span><span></span></button>
+    </header>
+    <nav class="slide-nav" id="slide-nav">
+        <ul>
+            <li><a href="/SILENT_GAMERS_V2/pages/tournament.html">Tournaments</a></li>
+            <li><a href="/SILENT_GAMERS_V2/pages/profile.html">My Profile</a></li>
+            <li><a href="/SILENT_GAMERS_V2/pages/shop.html">Shop</a></li>
+        </ul>
+        <div class="nav-footer"><button id="logout-btn" class="logout-btn hidden">Log Out</button></div>
+    </nav>
+
+    <!-- Page Specific Content -->
+    <main class="main-container">
+        <section class="shop-section">
+            <div class="shop-box">
+                <h2>Purchase Tokens</h2>
+                <p class="shop-subtitle">Top up your wallet to join exclusive tournaments.</p>
+
+                <!-- Step 1: Purchase Form -->
+                <form id="purchase-form" class="step active">
+                    <div class="token-selector">
+                        <input type="radio" id="buy-red-token" name="tokenType" value="RedToken" checked>
+                        <label for="buy-red-token">Red Token</label>
+                        <input type="radio" id="buy-power-coin" name="tokenType" value="PowerCoin">
+                        <label for="buy-power-coin">Power Coin</label>
+                    </div>
+                    <div class="input-group">
+                        <label for="amount">Amount (₹50 - ₹5000)</label>
+                        <input type="number" id="amount" min="50" max="5000" placeholder="Enter amount in INR" required>
+                    </div>
+                    <button type="submit" class="primary-btn">Proceed to Pay</button>
+                    <p id="purchase-error" class="error-message"></p>
+                </form>
+
+                <!-- Step 2: Payment Section -->
+                <div id="payment-section" class="step">
+                    <h3>Scan to Pay <span id="payment-amount"></span></h3>
+                    <div id="qrcode-container"></div>
+                    <p class="upi-address">UPI ID: <strong>your-upi-id@okhdfcbank</strong></p>
+                    
+                    <form id="confirmation-form">
+                        <div class="input-group">
+                            <label for="transactionID">Payment Transaction ID (UTR)</label>
+                            <input type="text" id="transactionID" placeholder="Enter 12-digit UTR No." required>
+                        </div>
+                        <button type="submit" id="confirm-btn" class="primary-btn">Confirm Purchase</button>
+                    </form>
+                    <button id="back-to-shop-btn" class="secondary-btn">Go Back</button>
+                    <p id="confirmation-error" class="error-message"></p>
+                </div>
+
+                <!-- Step 3: Success Message -->
+                <div id="success-section" class="step">
+                    <i class="fas fa-check-circle success-icon"></i>
+                    <h3>Purchase Request Sent!</h3>
+                    <p>Your request has been submitted. Tokens will be added to your wallet within 30 minutes after verification.</p>
+                    <a href="/SILENT_GAMERS_V2/pages/tournament.html" class="primary-btn">Back to Tournaments</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer (Common Element) -->
+    <footer class="site-footer">
+        <div class="social-links">
+            <a href="https://www.instagram.com/silent.gamers?igsh=MWN6bGdsdzhyb3Nicw==" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.youtube.com/@SilentGaminghub1" target="_blank"><i class="fab fa-youtube"></i></a>
+        </div>
+    </footer>
+    
+    <script type="module" src="/SILENT_GAMERS_V2/assets/js/shop.js"></script>
+
+</body>
+</html>
