@@ -627,3 +627,102 @@ a {
 #signup-status.success {
     color: var(--color-green-success);
 }
+/* --- 10. SHOP PAGE SPECIFIC STYLES --- */
+
+.shop-section {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.shop-box {
+    background: var(--color-dark-grey);
+    padding: 40px;
+    border-radius: 15px;
+    border: 1px solid var(--color-silver);
+    text-align: center;
+}
+.shop-box h2 {
+    font-family: var(--font-heading);
+    color: var(--color-silver);
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+.shop-subtitle {
+    color: #aaa;
+    margin-bottom: 30px;
+}
+
+/* Step-based form styling */
+.step {
+    display: none;
+}
+.step.active {
+    display: block;
+}
+
+/* Token Selector (Radio Buttons) */
+.token-selector {
+    display: flex;
+    margin-bottom: 20px;
+    border: 1px solid var(--color-silver);
+    border-radius: 8px;
+    overflow: hidden;
+}
+.token-selector input[type="radio"] {
+    display: none;
+}
+.token-selector label {
+    flex: 1;
+    padding: 12px;
+    cursor: pointer;
+    background: transparent;
+    color: var(--color-silver);
+    transition: background 0.3s;
+}
+.token-selector input[type="radio"]:checked + label {
+    background: var(--color-silver);
+    color: var(--color-black);
+    font-weight: bold;
+}
+
+/* Payment Section */
+#payment-section h3 {
+    font-family: var(--font-heading);
+    margin-bottom: 20px;
+}
+#qrcode-container {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    display: inline-block; /* To center it */
+    margin-bottom: 15px;
+}
+.upi-address {
+    margin-bottom: 25px;
+}
+.secondary-btn {
+    background: transparent;
+    color: var(--color-silver);
+    border: 1px solid var(--color-silver);
+    width: 100%;
+    padding: 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-family: var(--font-heading);
+}
+
+/* Success Section */
+.success-icon {
+    font-size: 4rem;
+    color: var(--color-green-success);
+    margin-bottom: 20px;
+}
+#success-section h3 {
+    font-family: var(--font-heading);
+    margin-bottom: 15px;
+}
+#success-section p {
+    color: #ccc;
+    margin-bottom: 30px;
+}
