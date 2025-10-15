@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome - Silent Gamers</title>
+    <!-- CSS file -->
+    <link rel="stylesheet" href="/SILENT_GAMERS_V2/assets/css/style.css">
+    <!-- Font Awesome (for icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1.css">
+</head>
+<body>
+
+    <!-- Login page par header ya nav nahi hota, isliye main content seedha yahan se shuru hota hai -->
+    <main class="login-container">
+        <div class="login-box">
+            <img src="https://ik.imagekit.io/silentgamers/Picsart_25-09-19_15-42-42-048.png?updatedAt=1758287984590&ik-s=818768f764ed7e928bf055f4f632c881cb77ec24" alt="Silent Gamers Logo" class="login-logo">
+            <h2>Welcome Back!</h2>
+            
+            <form id="login-form" novalidate>
+                <div class="input-group">
+                    <label for="mobile">Mobile Number</label>
+                    <input type="tel" id="mobile" placeholder="Enter 10-digit number" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                </div>
+                <!-- Button ka type "submit" hona zaroori hai form ke liye -->
+                <button type="submit" id="login-btn" class="primary-btn">Log In</button>
+                <p id="login-error" class="error-message"></p>
+            </form>
+
+            <div class="signup-link">
+                <p>Don't have an account? <a href="/SILENT_GAMERS_V2/pages/signup.html">Create one</a></p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Page Specific JavaScript -->
+    <!-- `type="module"` likhna zaroori hai kyunki hum import/export istemaal kar rahe hain -->
+    <script type="module">
+        import { login, checkSession } from '/SILENT_GAMERS_V2/assets/js/auth.js';
+
+        const loginForm = document.getElementById('login-form');
+        const mobileInput = document.getElementById('mobile');
+        const passwordInput = document.getElementById('password');
+        const loginError = document.getElementById('login-error');
+        const loginBtn = document.getElementById('login-btn');
+
+        // Page load hone par check karo, agar user pehle se logged in hai to use redirect kar do
+        if (checkSession()) {
+            window.location.href = '/SILENT_GAMERS_V2/pages/tournament.html';
+        }
+
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Page ko reload hone se roko
+
+            const mobile = mobileInput.value;
+            const password = passwordInput.value;
+            loginError.textContent = '';
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+
+            try {
+                // auth.js se login function ko call karo
+                await login(mobile, password);
+                // Agar successful hoga, to auth.js hi page ko redirect kar dega
+            } catch (error) {
+                // Agar koi error aaya, to use page par dikhao
+                loginError.textContent = error.message;
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = 'Log In';
+            }
+        });
+    </script>
+
+</body>
+</html>
