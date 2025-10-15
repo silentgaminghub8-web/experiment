@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - Silent Gamers</title>
+    <link rel="stylesheet" href="/SILENT_GAMERS_V2/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+    <!-- Full Screen Loader (Common Element) -->
+    <div id="page-loader" class="loader-overlay hidden">
+        <i class="fas fa-spinner fa-spin"></i>
+    </div>
+
+    <!-- Page Specific Content (No Header/Footer for distraction-free signup) -->
+    <main class="signup-container">
+        
+        <div class="signup-box">
+            <a href="/SILENT_GAMERS_V2/index.html">
+                <img src="https://ik.imagekit.io/silentgamers/Picsart_25-09-19_15-42-42-048.png?updatedAt=1758287984590&ik-s=818768f764ed7e928bf055f4f632c881cb77ec24" alt="Logo" class="signup-logo">
+            </a>
+            <h2>Join the Arena</h2>
+            <p class="signup-subtitle">Create your account to start competing.</p>
+
+            <form id="signup-form" novalidate>
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="input-group">
+                    <label for="mobile">Mobile Number (10 digits)</label>
+                    <input type="tel" id="mobile" required pattern="\d{10}">
+                </div>
+                <div class="input-group">
+                    <label for="email">Email (Optional)</label>
+                    <input type="email" id="email">
+                </div>
+                <div class="input-group">
+                    <label for="gameUID">Game UID</label>
+                    <input type="text" id="gameUID" required>
+                </div>
+                <div class="input-group">
+                    <label for="gameName">Game Name</label>
+                    <input type="text" id="gameName" required>
+                </div>
+                <div class="input-group">
+                    <label for="upiID">UPI ID (for rewards, optional)</label>
+                    <input type="text" id="upiID">
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div class="input-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+
+                <button type="submit" id="signup-btn" class="primary-btn">Create Account</button>
+                <p id="signup-status" class="error-message"></p>
+            </form>
+            <div class="login-link">
+                <p>Already have an account? <a href="/SILENT_GAMERS_V2/index.html">Log In</a></p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Page Specific JavaScript -->
+    <script type="module" src="/SILENT_GAMERS_V2/assets/js/signup.js"></script>
+
+</body>
+</html>
