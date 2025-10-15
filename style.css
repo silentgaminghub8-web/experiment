@@ -571,3 +571,59 @@ a {
         grid-template-columns: 1fr 1fr;
     }
 }
+/* --- 9. SIGNUP PAGE SPECIFIC STYLES --- */
+
+.signup-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+    background-color: var(--color-black);
+    /* padding-top: 0 is needed as we removed the header */
+    padding-top: 0;
+}
+
+.signup-box {
+    background: var(--color-dark-grey);
+    border: 1px solid var(--color-silver);
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(192, 192, 192, 0.2);
+    width: 100%;
+    max-width: 500px;
+}
+
+.signup-logo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--color-silver);
+    margin-bottom: 20px;
+}
+
+.signup-box h2 {
+    font-family: var(--font-heading);
+    margin-bottom: 10px;
+    font-size: 2rem;
+    color: var(--color-silver);
+}
+
+.signup-subtitle {
+    color: #aaa;
+    margin-bottom: 30px;
+}
+
+#signup-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-link {
+    margin-top: 20px;
+}
+
+#signup-status.success {
+    color: var(--color-green-success);
+}
