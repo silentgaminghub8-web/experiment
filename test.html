@@ -18,7 +18,7 @@
             
             /* Accents */
             --primary: #6366f1; /* Indigo */
-            --primary-glow: rgba(99, 102, 241, 0.5);
+            --primary-glow: rgba(99, 102, 241, 0.6);
             --secondary: #ec4899; /* Pink */
             --text-main: #e2e8f0;
             --text-muted: #64748b;
@@ -86,44 +86,82 @@
             box-shadow: 0 0 15px var(--primary-glow);
         }
 
-        /* The Run Button */
-        .btn-run {
-            background: linear-gradient(90deg, var(--primary), #818cf8);
+        /* ------------------------------------------------------------
+           3. FLOATING RUN BUTTON (MID-LEFT)
+           ------------------------------------------------------------ */
+        .btn-run-floating {
+            position: fixed;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            z-index: 99; /* Above editor, below result overlay */
+            
+            background: rgba(99, 102, 241, 0.15); /* Glassy background */
+            border: 1px solid rgba(99, 102, 241, 0.3);
             color: #fff;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
+            padding: 15px;
+            border-radius: 20px; /* Squircle */
+            
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            justify-content: center;
+            gap: 6px;
+            
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            
+            /* Ghost Mode: Semi-transparent when idle so you can read code behind it */
+            opacity: 0.5;
         }
 
-        .btn-run:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+        /* Hover State: Fully visible and glowing */
+        .btn-run-floating:hover {
+            opacity: 1;
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 30px var(--primary-glow);
+            transform: translateY(-50%) scale(1.05);
         }
 
-        .btn-run:active {
-            transform: scale(0.97);
+        .btn-run-floating:active {
+            transform: translateY(-50%) scale(0.95);
         }
 
         .play-icon {
             width: 0; 
             height: 0; 
-            border-top: 5px solid transparent;
-            border-bottom: 5px solid transparent;
-            border-left: 8px solid white;
+            border-top: 7px solid transparent;
+            border-bottom: 7px solid transparent;
+            border-left: 12px solid white;
+            margin-left: 2px; /* Optical centering */
+        }
+
+        .run-text {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: none; /* Hidden by default to save space */
+        }
+
+        /* Show text on hover for clarity */
+        .btn-run-floating:hover .run-text {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-2px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* ------------------------------------------------------------
-           3. EDITOR CONTAINER
+           4. EDITOR CONTAINER
            ------------------------------------------------------------ */
         #editor-wrapper {
             flex: 1;
@@ -155,7 +193,7 @@
             color: #a5b3ce;
             border: none;
             resize: none;
-            padding: 15px;
+            padding: 15px 15px 15px 25px; /* Extra left padding for the floating button clearance if needed */
             font-family: var(--font-code);
             font-size: 14px;
             line-height: 1.5;
@@ -210,7 +248,7 @@
         }
 
         /* ------------------------------------------------------------
-           4. FULL SCREEN RESULT OVERLAY
+           5. FULL SCREEN RESULT OVERLAY
            ------------------------------------------------------------ */
         #result-overlay {
             position: fixed;
@@ -238,7 +276,7 @@
         }
 
         /* ------------------------------------------------------------
-           5. THE BACK BUTTON (Floating Action)
+           6. THE BACK BUTTON (Floating Action)
            ------------------------------------------------------------ */
         .fab-back {
             position: fixed;
@@ -282,26 +320,28 @@
         }
 
         /* ------------------------------------------------------------
-           6. RESPONSIVE ADJUSTMENTS
+           7. RESPONSIVE ADJUSTMENTS
            ------------------------------------------------------------ */
         @media (max-width: 600px) {
             :root {
                 --header-height: 55px;
             }
             .brand-text {
-                display: none; /* Icon only on small mobile */
-            }
-            .btn-run {
-                padding: 8px 16px;
-                font-size: 0.85rem;
+                display: block; /* Keep brand text */
             }
             .line-numbers {
-                width: 35px; /* Thinner gutter on mobile */
+                width: 35px;
                 padding-right: 5px;
             }
             textarea#code-input {
-                padding: 15px 10px;
+                padding: 15px 10px 15px 10px;
                 font-size: 13px;
+            }
+            /* Adjust floating button for mobile */
+            .btn-run-floating {
+                left: 10px;
+                padding: 12px;
+                border-radius: 16px;
             }
             .fab-back {
                 top: 15px;
@@ -325,11 +365,14 @@
             </div>
             <span class="brand-text">IDE PRO</span>
         </div>
-        <button class="btn-run" onclick="runCode()">
-            <div class="play-icon"></div>
-            <span>Run Code</span>
-        </button>
+        <!-- Run button removed from header -->
     </header>
+
+    <!-- FLOATING RUN BUTTON (MID LEFT) -->
+    <button class="btn-run-floating" onclick="runCode()" title="Run Code">
+        <div class="play-icon"></div>
+        <span class="run-text">RUN</span>
+    </button>
 
     <!-- EDITOR AREA -->
     <div id="editor-wrapper">
@@ -356,7 +399,7 @@
         </iframe>
     </div>
 
-    <!-- FLOATING BACK BUTTON -->
+    <!-- FLOATING BACK BUTTON (Top Right in Result) -->
     <div class="fab-back" onclick="closeResult()" title="Back to Code">
         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -473,7 +516,6 @@
             resultOverlay.classList.add('active');
 
             // 2. Inject Code into Iframe
-            // Using a short timeout ensures the UI transition is buttery smooth before DOM operations
             setTimeout(() => {
                 const code = textarea.value;
                 const iframeDoc = iframe.contentWindow.document;
@@ -488,13 +530,13 @@
             // 1. Hide Result Layer
             resultOverlay.classList.remove('active');
 
-            // 2. Clear Iframe (Stops audio/video streams immediately)
+            // 2. Clear Iframe
             setTimeout(() => {
                 const iframeDoc = iframe.contentWindow.document;
                 iframeDoc.open();
                 iframeDoc.write("");
                 iframeDoc.close();
-            }, 400); // Wait for slide-down animation to finish
+            }, 400); 
         }
     </script>
 </body>
