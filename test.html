@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ultra Premium Code Runner</title>
+    <style>
+        /* ------------------------------------------------------------
+           1. CORE VARIABLES & RESET
+           ------------------------------------------------------------ */
+        :root {
+            /* Colors: Deep Space Theme */
+            --bg-body: #050509;
+            --bg-panel: #0f1016;
+            --bg-editor: #161821;
+            --glass-bg: rgba(20, 20, 30, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            
+            /* Accents */
+            --primary: #6366f1; /* Indigo */
+            --primary-glow: rgba(99, 102, 241, 0.5);
+            --secondary: #ec4899; /* Pink */
+            --text-main: #e2e8f0;
+            --text-muted: #64748b;
+            
+            /* Typography */
+            --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-code: 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+            
+            /* Dimensions */
+            --header-height: 60px;
+            --status-height: 30px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: var(--font-ui);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ------------------------------------------------------------
+           2. HEADER (Glassmorphism)
+           ------------------------------------------------------------ */
+        header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 10;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        /* The Run Button */
+        .btn-run {
+            background: linear-gradient(90deg, var(--primary), #818cf8);
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-run:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn-run:active {
+            transform: scale(0.97);
+        }
+
+        .play-icon {
+            width: 0; 
+            height: 0; 
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 8px solid white;
+        }
+
+        /* ------------------------------------------------------------
+           3. EDITOR CONTAINER
+           ------------------------------------------------------------ */
+        #editor-wrapper {
+            flex: 1;
+            display: flex;
+            position: relative;
+            background-color: var(--bg-editor);
+            overflow: hidden;
+        }
+
+        /* Line Numbers */
+        .line-numbers {
+            width: 45px;
+            background-color: var(--bg-panel);
+            color: var(--text-muted);
+            text-align: right;
+            padding: 15px 10px 15px 0;
+            font-family: var(--font-code);
+            font-size: 14px;
+            line-height: 1.5;
+            user-select: none;
+            border-right: 1px solid var(--glass-border);
+            overflow: hidden;
+        }
+
+        /* Code Textarea */
+        textarea#code-input {
+            flex: 1;
+            background-color: transparent;
+            color: #a5b3ce;
+            border: none;
+            resize: none;
+            padding: 15px;
+            font-family: var(--font-code);
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre;
+            overflow: auto;
+            tab-size: 4;
+        }
+
+        textarea#code-input:focus {
+            outline: none;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-panel);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2d303e;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3e4255;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            height: var(--status-height);
+            background: var(--bg-panel);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            justify-content: space-between;
+        }
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .indicator {
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #10b981;
+        }
+
+        /* ------------------------------------------------------------
+           4. FULL SCREEN RESULT OVERLAY
+           ------------------------------------------------------------ */
+        #result-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            z-index: 100;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform;
+        }
+
+        #result-overlay.active {
+            transform: translateY(0);
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            background: #fff;
+        }
+
+        /* ------------------------------------------------------------
+           5. THE BACK BUTTON (Floating Action)
+           ------------------------------------------------------------ */
+        .fab-back {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            z-index: 101;
+            width: 48px;
+            height: 48px;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 14px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: scale(0.8) translateY(-10px);
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        #result-overlay.active ~ .fab-back {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+        }
+
+        .fab-back:hover {
+            background: rgba(15, 23, 42, 0.9);
+            transform: scale(1.1);
+        }
+
+        .fab-back svg {
+            width: 24px;
+            height: 24px;
+            stroke-width: 2.5;
+        }
+
+        /* ------------------------------------------------------------
+           6. RESPONSIVE ADJUSTMENTS
+           ------------------------------------------------------------ */
+        @media (max-width: 600px) {
+            :root {
+                --header-height: 55px;
+            }
+            .brand-text {
+                display: none; /* Icon only on small mobile */
+            }
+            .btn-run {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+            }
+            .line-numbers {
+                width: 35px; /* Thinner gutter on mobile */
+                padding-right: 5px;
+            }
+            textarea#code-input {
+                padding: 15px 10px;
+                font-size: 13px;
+            }
+            .fab-back {
+                top: 15px;
+                right: 15px;
+                width: 42px;
+                height: 42px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="brand">
+            <div class="brand-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+            </div>
+            <span class="brand-text">IDE PRO</span>
+        </div>
+        <button class="btn-run" onclick="runCode()">
+            <div class="play-icon"></div>
+            <span>Run Code</span>
+        </button>
+    </header>
+
+    <!-- EDITOR AREA -->
+    <div id="editor-wrapper">
+        <div class="line-numbers" id="line-numbers">1</div>
+        <textarea id="code-input" spellcheck="false" placeholder="Write your HTML, CSS, and JS here..."></textarea>
+    </div>
+
+    <!-- STATUS BAR -->
+    <div class="status-bar">
+        <div class="status-item">
+            <div class="indicator"></div>
+            <span>Ready</span>
+        </div>
+        <div class="status-item">
+            <span id="char-count">0 chars</span>
+        </div>
+    </div>
+
+    <!-- RESULT OVERLAY -->
+    <div id="result-overlay">
+        <iframe id="preview-frame" 
+                allow="accelerometer; camera; encrypted-media; display-capture; geolocation; gyroscope; microphone; midi; clipboard-read; clipboard-write; fullscreen; payment" 
+                sandbox="allow-downloads allow-forms allow-modals allow-pointer-lock allow-popups allow-presentation allow-same-origin allow-scripts allow-top-navigation-by-user-activation">
+        </iframe>
+    </div>
+
+    <!-- FLOATING BACK BUTTON -->
+    <div class="fab-back" onclick="closeResult()" title="Back to Code">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const textarea = document.getElementById('code-input');
+        const lineNumbers = document.getElementById('line-numbers');
+        const resultOverlay = document.getElementById('result-overlay');
+        const iframe = document.getElementById('preview-frame');
+        const charCount = document.getElementById('char-count');
+
+        // Default Code Template
+        const defaultCode = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Preview</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 100vh; margin: 0; background: #f0f2f5; color: #333;
+        }
+        .container {
+            background: white; padding: 2rem; border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center;
+            max-width: 90%; width: 400px;
+        }
+        h1 { margin-bottom: 0.5rem; color: #111; }
+        p { color: #666; line-height: 1.6; }
+        .btn {
+            background: #2563eb; color: white; border: none; padding: 12px 24px;
+            border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 1rem;
+            transition: transform 0.2s;
+        }
+        .btn:active { transform: scale(0.95); }
+        video { width: 100%; border-radius: 8px; margin-top: 15px; background: #000; display:none;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>It Works!</h1>
+        <p>This is your fully responsive, hardware-accelerated preview environment.</p>
+        
+        <button class="btn" onclick="openCam()">Enable Camera</button>
+        <video id="vid" autoplay playsinline></video>
+    </div>
+
+    <script>
+        function openCam() {
+            const vid = document.getElementById('vid');
+            vid.style.display = 'block';
+            if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                .then(stream => vid.srcObject = stream)
+                .catch(err => alert("Error: " + err.message));
+            } else {
+                alert("Camera API not supported in this context.");
+            }
+        }
+    <\/script>
+</body>
+</html>`;
+
+        // Initialize Editor
+        textarea.value = defaultCode;
+        updateLineNumbers();
+        updateCharCount();
+
+        // --- EVENT LISTENERS ---
+
+        // 1. Sync Scroll (Textarea <-> Line Numbers)
+        textarea.addEventListener('scroll', () => {
+            lineNumbers.scrollTop = textarea.scrollTop;
+        });
+
+        // 2. Input Handling (Update lines, count)
+        textarea.addEventListener('input', () => {
+            updateLineNumbers();
+            updateCharCount();
+        });
+
+        // 3. Tab Key Support (Insert spaces instead of losing focus)
+        textarea.addEventListener('keydown', (e) => {
+            if (e.key == 'Tab') {
+                e.preventDefault();
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                // Insert 4 spaces
+                textarea.value = textarea.value.substring(0, start) + "    " + textarea.value.substring(end);
+                // Move cursor
+                textarea.selectionStart = textarea.selectionEnd = start + 4;
+                updateCharCount();
+            }
+        });
+
+        // --- FUNCTIONS ---
+
+        function updateLineNumbers() {
+            const lines = textarea.value.split('\n').length;
+            lineNumbers.innerHTML = Array(lines).fill(0).map((_, i) => i + 1).join('<br>');
+        }
+
+        function updateCharCount() {
+            charCount.textContent = `${textarea.value.length} chars`;
+        }
+
+        function runCode() {
+            // 1. Show Result Layer
+            resultOverlay.classList.add('active');
+
+            // 2. Inject Code into Iframe
+            // Using a short timeout ensures the UI transition is buttery smooth before DOM operations
+            setTimeout(() => {
+                const code = textarea.value;
+                const iframeDoc = iframe.contentWindow.document;
+                
+                iframeDoc.open();
+                iframeDoc.write(code);
+                iframeDoc.close();
+            }, 300);
+        }
+
+        function closeResult() {
+            // 1. Hide Result Layer
+            resultOverlay.classList.remove('active');
+
+            // 2. Clear Iframe (Stops audio/video streams immediately)
+            setTimeout(() => {
+                const iframeDoc = iframe.contentWindow.document;
+                iframeDoc.open();
+                iframeDoc.write("");
+                iframeDoc.close();
+            }, 400); // Wait for slide-down animation to finish
+        }
+    </script>
+</body>
+</html>
