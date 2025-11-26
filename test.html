@@ -2,269 +2,297 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ultra Premium Code Runner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web App Builder</title>
     <style>
-        /* ------------------------------------------------------------
-           1. CORE VARIABLES & RESET
-           ------------------------------------------------------------ */
-        :root {
-            /* Colors: Deep Space Theme */
-            --bg-body: #050509;
-            --bg-panel: #0f1016;
-            --bg-editor: #161821;
-            --glass-bg: rgba(20, 20, 30, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            
-            /* Accents */
-            --primary: #6366f1; /* Indigo */
-            --primary-glow: rgba(99, 102, 241, 0.6);
-            --secondary: #ec4899; /* Pink */
-            --text-main: #e2e8f0;
-            --text-muted: #64748b;
-            
-            /* Typography */
-            --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
-            --font-code: 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
-            
-            /* Dimensions */
-            --header-height: 60px;
-            --status-height: 30px;
-        }
-
+        /* --- RESET & BASIC SETUP --- */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            outline: none;
-            -webkit-tap-highlight-color: transparent;
         }
-
         body {
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            font-family: var(--font-ui);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
             height: 100vh;
             width: 100vw;
             overflow: hidden;
             display: flex;
             flex-direction: column;
         }
-
-        /* ------------------------------------------------------------
-           2. HEADER (Glassmorphism)
-           ------------------------------------------------------------ */
-        header {
-            height: var(--header-height);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--glass-border);
-            z-index: 10;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .brand-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 15px var(--primary-glow);
-        }
-
-        /* ------------------------------------------------------------
-           3. FLOATING RUN BUTTON (MID-LEFT)
-           ------------------------------------------------------------ */
-        .btn-run-floating {
-            position: fixed;
-            top: 50%;
-            left: 20px;
-            transform: translateY(-50%);
-            z-index: 99; /* Above editor, below result overlay */
-            
-            background: rgba(99, 102, 241, 0.15); /* Glassy background */
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            color: #fff;
-            padding: 15px;
-            border-radius: 20px; /* Squircle */
-            
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            
+        button {
             cursor: pointer;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            
-            /* Ghost Mode: Semi-transparent when idle so you can read code behind it */
-            opacity: 0.5;
-        }
-
-        /* Hover State: Fully visible and glowing */
-        .btn-run-floating:hover {
-            opacity: 1;
-            background: var(--primary);
-            border-color: var(--primary);
-            box-shadow: 0 0 30px var(--primary-glow);
-            transform: translateY(-50%) scale(1.05);
-        }
-
-        .btn-run-floating:active {
-            transform: translateY(-50%) scale(0.95);
-        }
-
-        .play-icon {
-            width: 0; 
-            height: 0; 
-            border-top: 7px solid transparent;
-            border-bottom: 7px solid transparent;
-            border-left: 12px solid white;
-            margin-left: 2px; /* Optical centering */
-        }
-
-        .run-text {
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: none; /* Hidden by default to save space */
-        }
-
-        /* Show text on hover for clarity */
-        .btn-run-floating:hover .run-text {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-2px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ------------------------------------------------------------
-           4. EDITOR CONTAINER
-           ------------------------------------------------------------ */
-        #editor-wrapper {
-            flex: 1;
-            display: flex;
-            position: relative;
-            background-color: var(--bg-editor);
-            overflow: hidden;
-        }
-
-        /* Line Numbers */
-        .line-numbers {
-            width: 45px;
-            background-color: var(--bg-panel);
-            color: var(--text-muted);
-            text-align: right;
-            padding: 15px 10px 15px 0;
-            font-family: var(--font-code);
-            font-size: 14px;
-            line-height: 1.5;
-            user-select: none;
-            border-right: 1px solid var(--glass-border);
-            overflow: hidden;
-        }
-
-        /* Code Textarea */
-        textarea#code-input {
-            flex: 1;
-            background-color: transparent;
-            color: #a5b3ce;
             border: none;
-            resize: none;
-            padding: 15px 15px 15px 25px; /* Extra left padding for the floating button clearance if needed */
-            font-family: var(--font-code);
-            font-size: 14px;
-            line-height: 1.5;
-            white-space: pre;
-            overflow: auto;
-            tab-size: 4;
-        }
-
-        textarea#code-input:focus {
             outline: none;
+            padding: 5px 10px;
+            font-size: 14px;
+            border-radius: 3px;
+            transition: background 0.2s;
         }
 
-        /* Scrollbar Styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--bg-panel);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #2d303e;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #3e4255;
-        }
-
-        /* Status Bar */
-        .status-bar {
-            height: var(--status-height);
-            background: var(--bg-panel);
-            border-top: 1px solid var(--glass-border);
-            display: flex;
-            align-items: center;
-            padding: 0 15px;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            justify-content: space-between;
-        }
-        .status-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .indicator {
-            width: 8px;
-            height: 8px;
-            background-color: #10b981;
-            border-radius: 50%;
-            box-shadow: 0 0 5px #10b981;
-        }
-
-        /* ------------------------------------------------------------
-           5. FULL SCREEN RESULT OVERLAY
-           ------------------------------------------------------------ */
-        #result-overlay {
+        /* --- MAIN HEADER (Fixed Overlay) --- */
+        #header {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background: #ffffff;
-            z-index: 100;
-            transform: translateY(100%);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            will-change: transform;
+            height: 50px;
+            background-color: #2d2d2d;
+            border-bottom: 1px solid #3e3e3e;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        #result-overlay.active {
-            transform: translateY(0);
+        /* --- ULTRA HEADER (Hidden by default) --- */
+        #ultra-header {
+            display: none; /* Hidden initially */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background-color: #330033; /* Distinct color for Ultra Mode */
+            border-bottom: 1px solid #550055;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+            z-index: 1001; /* Higher than normal header */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .header-left, .header-mid, .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Header Buttons Styling */
+        .btn-header {
+            background-color: #3c3c3c;
+            color: white;
+        }
+        .btn-header:hover {
+            background-color: #505050;
+        }
+        .btn-run { background-color: #0e639c; }
+        .btn-run:hover { background-color: #1177bb; }
+        .btn-live { background-color: #ce9178; color: #1e1e1e; font-weight: bold; }
+        .btn-flash { background-color: #4caf50; }
+        .btn-ultra { background-color: #6a1b9a; color: white; }
+        .btn-ultra:hover { background-color: #8e24aa; }
+
+        /* Ultra Header Buttons */
+        .btn-ultra-action { background-color: #9c27b0; color: white; }
+        .btn-ultra-back { background-color: #d32f2f; color: white; }
+        .btn-ultra-update { background-color: #00897b; color: white; }
+        
+        .toggle-btn {
+            background-color: #444;
+            color: #aaa;
+            border: 1px solid #555;
+        }
+        .toggle-btn.active {
+            background-color: #4caf50;
+            color: white;
+            border-color: #4caf50;
+        }
+
+        /* --- SUB-HEADER (Files) --- */
+        #sub-header {
+            position: fixed;
+            top: 50px;
+            left: 0;
+            width: 100%;
+            height: 35px;
+            background-color: #252526;
+            border-bottom: 1px solid #3e3e3e;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            z-index: 999;
+            overflow-x: auto;
+        }
+
+        .file-tab {
+            background-color: #2d2d2d;
+            padding: 5px 10px;
+            margin-right: 5px;
+            font-size: 13px;
+            color: #cccccc;
+            border-radius: 3px 3px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .file-tab.active {
+            background-color: #1e1e1e;
+            border-top: 1px solid #0e639c;
+            color: white;
+        }
+        .file-tab span { pointer-events: none; }
+        .file-action-btn {
+            font-size: 10px;
+            padding: 2px;
+            margin-left: 5px;
+            background: transparent;
+            color: #aaa;
+        }
+        .file-action-btn:hover { color: white; background: #444; }
+        #add-file-btn {
+            background: transparent;
+            color: #ccc;
+            font-size: 16px;
+            padding: 0 10px;
+        }
+
+        /* --- CONTENT AREA --- */
+        #main-container {
+            margin-top: 85px; 
+            height: calc(100vh - 85px);
+            display: flex;
+            position: relative;
+            width: 100%;
+        }
+
+        /* Ultra Mode Container Adjustments */
+        #main-container.ultra-mode {
+            margin-top: 50px; /* Only Ultra Header visible */
+            height: calc(100vh - 50px);
+        }
+
+        /* --- LEFT: CODE EDITOR --- */
+        #editor-container {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            background-color: #1e1e1e;
+            position: relative;
+            min-width: 100px;
+        }
+
+        /* --- LEFT: ULTRA LAYER EDITOR (Initially Hidden) --- */
+        #layer-editor-container {
+            display: none; /* Hidden in normal mode */
+            width: 50%;
+            flex-direction: column;
+            background-color: #252526;
+            border-right: 1px solid #444;
+            overflow: hidden;
+        }
+        
+        .layer-header {
+            padding: 10px;
+            background: #333;
+            color: #ddd;
+            font-weight: bold;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        #layer-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .layer-item {
+            padding: 5px 10px;
+            margin-bottom: 2px;
+            background: #2d2d2d;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .layer-item:hover { background: #3d3d3d; }
+        .layer-item.active { background: #6a1b9a; color: white; }
+
+        .layer-controls {
+            display: flex;
+            gap: 5px;
+        }
+        .layer-btn {
+            font-size: 10px;
+            padding: 2px 5px;
+            background: #444;
+            color: white;
+        }
+
+        /* --- COMMON EDITOR STYLES --- */
+        .editor-body {
+            display: flex;
+            flex-grow: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #line-numbers {
+            width: 40px;
+            background-color: #1e1e1e;
+            color: #858585;
+            text-align: right;
+            padding: 10px 5px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 20px;
+            border-right: 1px solid #333;
+            user-select: none;
+            overflow: hidden;
+        }
+
+        #code-input {
+            flex-grow: 1;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            border: none;
+            resize: none;
+            padding: 10px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 20px;
+            outline: none;
+            white-space: pre;
+            overflow: auto;
+        }
+
+        #word-count-bar {
+            height: 25px;
+            background-color: #007acc;
+            color: white;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+        }
+
+        /* --- RESIZER --- */
+        #resizer {
+            width: 5px;
+            background-color: #3e3e3e;
+            cursor: col-resize;
+            z-index: 10;
+            transition: background 0.2s;
+        }
+        #resizer:hover, #resizer.resizing {
+            background-color: #0e639c;
+        }
+
+        /* --- RIGHT: PREVIEW --- */
+        #preview-container {
+            flex-grow: 1;
+            background-color: white;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
         iframe {
@@ -272,272 +300,711 @@
             height: 100%;
             border: none;
             display: block;
-            background: #fff;
         }
 
-        /* ------------------------------------------------------------
-           6. THE BACK BUTTON (Floating Action)
-           ------------------------------------------------------------ */
-        .fab-back {
+        /* --- FLASH OVERLAY --- */
+        #flash-overlay {
+            display: none;
             position: fixed;
-            top: 25px;
-            right: 25px;
-            z-index: 101;
-            width: 48px;
-            height: 48px;
-            background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 14px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-            opacity: 0;
-            transform: scale(0.8) translateY(-10px);
-            pointer-events: none;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            z-index: 9999;
         }
-
-        #result-overlay.active ~ .fab-back {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-            pointer-events: auto;
-        }
-
-        .fab-back:hover {
-            background: rgba(15, 23, 42, 0.9);
-            transform: scale(1.1);
-        }
-
-        .fab-back svg {
-            width: 24px;
-            height: 24px;
-            stroke-width: 2.5;
-        }
-
-        /* ------------------------------------------------------------
-           7. RESPONSIVE ADJUSTMENTS
-           ------------------------------------------------------------ */
-        @media (max-width: 600px) {
-            :root {
-                --header-height: 55px;
-            }
-            .brand-text {
-                display: block; /* Keep brand text */
-            }
-            .line-numbers {
-                width: 35px;
-                padding-right: 5px;
-            }
-            textarea#code-input {
-                padding: 15px 10px 15px 10px;
-                font-size: 13px;
-            }
-            /* Adjust floating button for mobile */
-            .btn-run-floating {
-                left: 10px;
-                padding: 12px;
-                border-radius: 16px;
-            }
-            .fab-back {
-                top: 15px;
-                right: 15px;
-                width: 42px;
-                height: 42px;
-            }
-        }
-    </style>
-</head>
-<body>
-
-    <!-- HEADER -->
-    <header>
-        <div class="brand">
-            <div class="brand-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="16 18 22 12 16 6"></polyline>
-                    <polyline points="8 6 2 12 8 18"></polyline>
-                </svg>
-            </div>
-            <span class="brand-text">IDE PRO</span>
-        </div>
-        <!-- Run button removed from header -->
-    </header>
-
-    <!-- FLOATING RUN BUTTON (MID LEFT) -->
-    <button class="btn-run-floating" onclick="runCode()" title="Run Code">
-        <div class="play-icon"></div>
-        <span class="run-text">RUN</span>
-    </button>
-
-    <!-- EDITOR AREA -->
-    <div id="editor-wrapper">
-        <div class="line-numbers" id="line-numbers">1</div>
-        <textarea id="code-input" spellcheck="false" placeholder="Write your HTML, CSS, and JS here..."></textarea>
-    </div>
-
-    <!-- STATUS BAR -->
-    <div class="status-bar">
-        <div class="status-item">
-            <div class="indicator"></div>
-            <span>Ready</span>
-        </div>
-        <div class="status-item">
-            <span id="char-count">0 chars</span>
-        </div>
-    </div>
-
-    <!-- RESULT OVERLAY -->
-    <div id="result-overlay">
-        <iframe id="preview-frame" 
-                allow="accelerometer; camera; encrypted-media; display-capture; geolocation; gyroscope; microphone; midi; clipboard-read; clipboard-write; fullscreen; payment" 
-                sandbox="allow-downloads allow-forms allow-modals allow-pointer-lock allow-popups allow-presentation allow-same-origin allow-scripts allow-top-navigation-by-user-activation">
-        </iframe>
-    </div>
-
-    <!-- FLOATING BACK BUTTON (Top Right in Result) -->
-    <div class="fab-back" onclick="closeResult()" title="Back to Code">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-    </div>
-
-    <script>
-        // --- CONFIGURATION ---
-        const textarea = document.getElementById('code-input');
-        const lineNumbers = document.getElementById('line-numbers');
-        const resultOverlay = document.getElementById('result-overlay');
-        const iframe = document.getElementById('preview-frame');
-        const charCount = document.getElementById('char-count');
-
-        // Default Code Template
-        const defaultCode = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Preview</title>
-    <style>
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            min-height: 100vh; margin: 0; background: #f0f2f5; color: #333;
-        }
-        .container {
-            background: white; padding: 2rem; border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center;
-            max-width: 90%; width: 400px;
-        }
-        h1 { margin-bottom: 0.5rem; color: #111; }
-        p { color: #666; line-height: 1.6; }
-        .btn {
-            background: #2563eb; color: white; border: none; padding: 12px 24px;
-            border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 1rem;
-            transition: transform 0.2s;
-        }
-        .btn:active { transform: scale(0.95); }
-        video { width: 100%; border-radius: 8px; margin-top: 15px; background: #000; display:none;}
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>It Works!</h1>
-        <p>This is your fully responsive, hardware-accelerated preview environment.</p>
         
-        <button class="btn" onclick="openCam()">Enable Camera</button>
-        <video id="vid" autoplay playsinline></video>
+        #flash-close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #ff4444;
+            color: white;
+            padding: 10px 15px;
+            font-weight: bold;
+            font-size: 16px;
+            border-radius: 5px;
+            z-index: 10000;
+        }
+
+        #flash-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- NORMAL HEADER -->
+    <div id="header">
+        <div class="header-left">
+            <button class="btn-header" id="btn-new">New Code</button>
+        </div>
+        <div class="header-mid">
+            <button class="btn-header btn-run" id="btn-run">Run</button>
+            <button class="btn-header btn-live" id="btn-live">Live: OFF</button>
+            <button class="btn-header btn-ultra" id="btn-ultra">UltraEdit</button>
+            <button class="btn-header" id="btn-copy">Copy</button>
+        </div>
+        <div class="header-right">
+            <button class="btn-header btn-flash" id="btn-flash">Flash</button>
+        </div>
+    </div>
+
+    <!-- ULTRA HEADER -->
+    <div id="ultra-header">
+        <div class="header-left">
+            <button class="btn-header btn-ultra-back" id="btn-ultra-back">Back</button>
+        </div>
+        <div class="header-mid">
+            <button class="btn-header btn-ultra-update" id="btn-ultra-update">Update & Save</button>
+            <button class="btn-header toggle-btn" id="btn-ultra-action">Action: ON</button>
+            <button class="btn-header btn-flash" id="btn-ultra-flash">Flash</button>
+        </div>
+        <div class="header-right">
+            <button class="btn-header toggle-btn active" id="btn-ultra-edit-toggle">Edit Mode: ON</button>
+        </div>
+    </div>
+
+    <!-- SUB-HEADER (Files) -->
+    <div id="sub-header">
+        <button id="add-file-btn" title="Add Page">+</button>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div id="main-container">
+        <!-- 1. Code Editor (Normal Mode) -->
+        <div id="editor-container">
+            <div class="editor-body">
+                <div id="line-numbers">1</div>
+                <textarea id="code-input" spellcheck="false" placeholder="Enter your HTML code here..."></textarea>
+            </div>
+            <div id="word-count-bar">Total Words: 0</div>
+        </div>
+
+        <!-- 2. Layer Editor (Ultra Mode) -->
+        <div id="layer-editor-container">
+            <div class="layer-header">Layers (Select to Edit)</div>
+            <div id="layer-list">
+                <!-- Layers injected via JS -->
+            </div>
+        </div>
+
+        <!-- Resizer -->
+        <div id="resizer"></div>
+
+        <!-- Preview -->
+        <div id="preview-container">
+            <iframe id="preview-frame"></iframe>
+        </div>
+    </div>
+
+    <!-- Flash Overlay -->
+    <div id="flash-overlay">
+        <button id="flash-close-btn">Close Preview</button>
+        <iframe id="flash-iframe"></iframe>
     </div>
 
     <script>
-        function openCam() {
-            const vid = document.getElementById('vid');
-            vid.style.display = 'block';
-            if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-                .then(stream => vid.srcObject = stream)
-                .catch(err => alert("Error: " + err.message));
-            } else {
-                alert("Camera API not supported in this context.");
+        // --- DATA STRUCTURE ---
+        let files = [
+            { id: 1, name: 'index.html', content: '<h1>Hello World</h1>\n<p>Welcome to Ultra Edit.</p>\n<div style="width:100px; height:100px; background:red;">Box</div>' },
+            { id: 2, name: 'style.css', content: 'body { padding: 20px; font-family: sans-serif; }' },
+            { id: 3, name: 'script.js', content: 'console.log("Ready.");' }
+        ];
+        let currentFileId = 1;
+        let isLive = false;
+        let isUltraMode = false;
+        let isUltraActionOn = true;
+        let isUltraEditOn = true;
+
+        // --- DOM ELEMENTS ---
+        const header = document.getElementById('header');
+        const subHeader = document.getElementById('sub-header');
+        const ultraHeader = document.getElementById('ultra-header');
+        const mainContainer = document.getElementById('main-container');
+        
+        const editorContainer = document.getElementById('editor-container');
+        const layerEditorContainer = document.getElementById('layer-editor-container');
+        
+        const codeInput = document.getElementById('code-input');
+        const lineNumbers = document.getElementById('line-numbers');
+        const wordCountBar = document.getElementById('word-count-bar');
+        const previewFrame = document.getElementById('preview-frame');
+        const addFileBtn = document.getElementById('add-file-btn');
+        const flashOverlay = document.getElementById('flash-overlay');
+        const flashIframe = document.getElementById('flash-iframe');
+        const resizer = document.getElementById('resizer');
+        const layerList = document.getElementById('layer-list');
+
+        // --- INIT ---
+        function init() {
+            renderTabs();
+            loadCurrentFile();
+            updateLineNumbers();
+            updateWordCount();
+            runPreview();
+        }
+
+        // --- NORMAL MODE LOGIC ---
+        function renderTabs() {
+            const tabs = subHeader.querySelectorAll('.file-tab');
+            tabs.forEach(t => t.remove());
+
+            files.forEach(file => {
+                const tab = document.createElement('div');
+                tab.className = `file-tab ${file.id === currentFileId ? 'active' : ''}`;
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.innerText = file.name;
+                tab.appendChild(nameSpan);
+
+                nameSpan.addEventListener('dblclick', (e) => {
+                    e.stopPropagation();
+                    const newName = prompt("Rename file:", file.name);
+                    if(newName && newName.trim() !== "") {
+                        file.name = newName;
+                        renderTabs();
+                    }
+                });
+
+                const delBtn = document.createElement('button');
+                delBtn.className = 'file-action-btn';
+                delBtn.innerText = 'x';
+                delBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    deleteFile(file.id);
+                };
+                tab.appendChild(delBtn);
+
+                tab.addEventListener('click', () => switchFile(file.id));
+                subHeader.insertBefore(tab, addFileBtn);
+            });
+        }
+
+        function switchFile(id) {
+            if(!isUltraMode) {
+                const currentFile = files.find(f => f.id === currentFileId);
+                if(currentFile) currentFile.content = codeInput.value;
+            }
+            currentFileId = id;
+            renderTabs();
+            loadCurrentFile();
+        }
+
+        function loadCurrentFile() {
+            const file = files.find(f => f.id === currentFileId);
+            if(file) {
+                codeInput.value = file.content;
+                updateLineNumbers();
+                updateWordCount();
             }
         }
-    <\/script>
-</body>
-</html>`;
 
-        // Initialize Editor
-        textarea.value = defaultCode;
-        updateLineNumbers();
-        updateCharCount();
+        function deleteFile(id) {
+            if(files.length <= 1) { alert("Cannot delete the last file."); return; }
+            if(confirm("Are you sure?")) {
+                const index = files.findIndex(f => f.id === id);
+                files.splice(index, 1);
+                if(currentFileId === id) currentFileId = files[0].id;
+                renderTabs();
+                loadCurrentFile();
+            }
+        }
 
-        // --- EVENT LISTENERS ---
-
-        // 1. Sync Scroll (Textarea <-> Line Numbers)
-        textarea.addEventListener('scroll', () => {
-            lineNumbers.scrollTop = textarea.scrollTop;
-        });
-
-        // 2. Input Handling (Update lines, count)
-        textarea.addEventListener('input', () => {
-            updateLineNumbers();
-            updateCharCount();
-        });
-
-        // 3. Tab Key Support (Insert spaces instead of losing focus)
-        textarea.addEventListener('keydown', (e) => {
-            if (e.key == 'Tab') {
-                e.preventDefault();
-                const start = textarea.selectionStart;
-                const end = textarea.selectionEnd;
-                // Insert 4 spaces
-                textarea.value = textarea.value.substring(0, start) + "    " + textarea.value.substring(end);
-                // Move cursor
-                textarea.selectionStart = textarea.selectionEnd = start + 4;
-                updateCharCount();
+        addFileBtn.addEventListener('click', () => {
+            const name = prompt("File name:", "new.html");
+            if(name) {
+                const newId = Date.now();
+                files.push({ id: newId, name: name, content: "" });
+                renderTabs();
+                switchFile(newId);
             }
         });
 
-        // --- FUNCTIONS ---
+        // Editor Listeners
+        codeInput.addEventListener('input', () => {
+            updateLineNumbers();
+            updateWordCount();
+            if(isLive) runPreview();
+        });
+        codeInput.addEventListener('scroll', () => { lineNumbers.scrollTop = codeInput.scrollTop; });
 
         function updateLineNumbers() {
-            const lines = textarea.value.split('\n').length;
+            const lines = codeInput.value.split('\n').length;
             lineNumbers.innerHTML = Array(lines).fill(0).map((_, i) => i + 1).join('<br>');
         }
-
-        function updateCharCount() {
-            charCount.textContent = `${textarea.value.length} chars`;
+        function updateWordCount() {
+            const text = codeInput.value.trim();
+            wordCountBar.innerText = `Total Words: ${text ? text.split(/\s+/).length : 0}`;
         }
 
-        function runCode() {
-            // 1. Show Result Layer
-            resultOverlay.classList.add('active');
+        // --- PREVIEW GENERATION ---
+        function getFullCode() {
+            if(!isUltraMode) {
+                const currentFile = files.find(f => f.id === currentFileId);
+                if(currentFile) currentFile.content = codeInput.value;
+            }
 
-            // 2. Inject Code into Iframe
-            setTimeout(() => {
-                const code = textarea.value;
-                const iframeDoc = iframe.contentWindow.document;
+            let htmlContent = "";
+            let cssContent = "";
+            let jsContent = "";
+
+            files.forEach(f => {
+                if(f.name.endsWith('.html')) htmlContent += f.content + "\n";
+                if(f.name.endsWith('.css')) cssContent += f.content + "\n";
+                if(f.name.endsWith('.js')) jsContent += f.content + "\n";
+            });
+
+            return `
+                <html>
+                <head>
+                    <style>${cssContent}</style>
+                    <style>
+                        /* Ultra Edit Helpers */
+                        .ultra-selected {
+                            outline: 2px solid #6a1b9a !important;
+                            position: relative;
+                            cursor: move;
+                            z-index: 9999;
+                            touch-action: none; /* Crucial for touch dragging */
+                        }
+                        .resize-handle {
+                            position: absolute;
+                            width: 20px;
+                            height: 20px;
+                            background: #6a1b9a;
+                            bottom: -10px;
+                            right: -10px;
+                            cursor: se-resize;
+                            z-index: 10000;
+                            border-radius: 50%;
+                            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+                            touch-action: none;
+                        }
+                        .rotate-handle {
+                            position: absolute;
+                            width: 20px;
+                            height: 20px;
+                            background: #00897b;
+                            top: -25px;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            cursor: grab;
+                            border-radius: 50%;
+                            z-index: 10000;
+                            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+                            touch-action: none;
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${htmlContent}
+                    <script>
+                        // --- ULTRA EDIT LOGIC INJECTION ---
+                        window.isUltraEditOn = ${isUltraEditOn};
+                        window.isUltraActionOn = ${isUltraActionOn};
+
+                        // Use Pointer Events for unified Mouse/Touch handling
+                        document.addEventListener('click', function(e) {
+                            if(window.isUltraEditOn) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                
+                                if(!e.target.classList.contains('resize-handle') && 
+                                   !e.target.classList.contains('rotate-handle')) {
+                                    selectElement(e.target);
+                                    window.parent.postMessage({ type: 'elementSelected', tag: e.target.tagName }, '*');
+                                }
+                            } else if (!window.isUltraActionOn) {
+                                e.preventDefault();
+                            }
+                        }, true);
+
+                        let currentSelection = null;
+                        
+                        function selectElement(el) {
+                            if(currentSelection) {
+                                currentSelection.classList.remove('ultra-selected');
+                                const h = currentSelection.querySelector('.resize-handle');
+                                if(h) h.remove();
+                                const r = currentSelection.querySelector('.rotate-handle');
+                                if(r) r.remove();
+                            }
+                            // Exclude root
+                            if(el === document.body || el === document.documentElement) return;
+                            
+                            currentSelection = el;
+                            el.classList.add('ultra-selected');
+                            
+                            // Add Handles
+                            const resize = document.createElement('div');
+                            resize.className = 'resize-handle';
+                            el.appendChild(resize);
+                            
+                            const rotate = document.createElement('div');
+                            rotate.className = 'rotate-handle';
+                            el.appendChild(rotate);
+
+                            // --- ATTACH POINTER EVENTS ---
+                            // Note: We use pointerdown instead of mousedown/touchstart
+                            el.onpointerdown = pointerDownDrag;
+                            resize.onpointerdown = pointerDownResize;
+                            rotate.onpointerdown = pointerDownRotate;
+                        }
+
+                        // --- ROBUST DRAG LOGIC (Pointer API) ---
+                        let startX, startY, startLeft, startTop;
+
+                        function pointerDownDrag(e) {
+                            if(e.target.className.includes('handle')) return; // Ignore handles
+                            if(!window.isUltraEditOn) return;
+
+                            e.preventDefault(); 
+                            e.stopPropagation();
+
+                            // Capture the pointer so we don't lose the element if moving fast
+                            e.target.setPointerCapture(e.pointerId);
+
+                            startX = e.clientX;
+                            startY = e.clientY;
+
+                            // Force positioning context
+                            const style = window.getComputedStyle(e.target);
+                            if(style.position === 'static') {
+                                e.target.style.position = 'relative';
+                            }
+
+                            // Calculate numeric starting positions
+                            // We use offsets relative to the parent
+                            startLeft = e.target.offsetLeft;
+                            startTop = e.target.offsetTop;
+
+                            e.target.onpointermove = pointerMoveDrag;
+                            e.target.onpointerup = pointerUpDrag;
+                            e.target.onpointercancel = pointerUpDrag;
+                        }
+
+                        function pointerMoveDrag(e) {
+                            if(!currentSelection) return;
+                            e.preventDefault();
+
+                            const dx = e.clientX - startX;
+                            const dy = e.clientY - startY;
+
+                            currentSelection.style.left = (startLeft + dx) + "px";
+                            currentSelection.style.top = (startTop + dy) + "px";
+                        }
+
+                        function pointerUpDrag(e) {
+                            e.target.onpointermove = null;
+                            e.target.onpointerup = null;
+                            e.target.onpointercancel = null;
+                            e.target.releasePointerCapture(e.pointerId);
+                        }
+
+                        // --- RESIZE LOGIC ---
+                        let startW, startH;
+
+                        function pointerDownResize(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            e.target.setPointerCapture(e.pointerId);
+
+                            startX = e.clientX;
+                            startY = e.clientY;
+                            
+                            const style = window.getComputedStyle(currentSelection);
+                            startW = parseInt(style.width, 10) || 0;
+                            startH = parseInt(style.height, 10) || 0;
+
+                            e.target.onpointermove = pointerMoveResize;
+                            e.target.onpointerup = pointerUpResize;
+                        }
+
+                        function pointerMoveResize(e) {
+                            e.preventDefault();
+                            const dx = e.clientX - startX;
+                            const dy = e.clientY - startY;
+                            currentSelection.style.width = (startW + dx) + 'px';
+                            currentSelection.style.height = (startH + dy) + 'px';
+                        }
+
+                        function pointerUpResize(e) {
+                            e.target.onpointermove = null;
+                            e.target.onpointerup = null;
+                            e.target.releasePointerCapture(e.pointerId);
+                        }
+
+                        // --- ROTATE LOGIC ---
+                        function pointerDownRotate(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            e.target.setPointerCapture(e.pointerId);
+                            
+                            startX = e.clientX;
+                            
+                            e.target.onpointermove = pointerMoveRotate;
+                            e.target.onpointerup = pointerUpRotate;
+                        }
+
+                        function pointerMoveRotate(e) {
+                            e.preventDefault();
+                            // Simple X-axis drag for rotation
+                            const diff = e.clientX - startX;
+                            currentSelection.style.transform = 'rotate(' + diff + 'deg)';
+                        }
+
+                        function pointerUpRotate(e) {
+                            e.target.onpointermove = null;
+                            e.target.onpointerup = null;
+                            e.target.releasePointerCapture(e.pointerId);
+                        }
+
+                    <\/script>
+                    <script>${jsContent}<\/script>
+                </body>
+                </html>
+            `;
+        }
+
+        function runPreview() {
+            const blob = new Blob([getFullCode()], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            previewFrame.src = url;
+            flashIframe.src = url;
+
+            previewFrame.onload = () => {
+                if(isUltraMode) buildLayerList();
+            };
+        }
+
+        // --- BUTTON HANDLERS ---
+        document.getElementById('btn-new').addEventListener('click', () => {
+            if(confirm("Clear everything?")) {
+                codeInput.value = "";
+                const currentFile = files.find(f => f.id === currentFileId);
+                if(currentFile) currentFile.content = "";
+                updateLineNumbers();
+                updateWordCount();
+                runPreview();
+            }
+        });
+
+        document.getElementById('btn-run').addEventListener('click', runPreview);
+
+        document.getElementById('btn-live').addEventListener('click', (e) => {
+            isLive = !isLive;
+            e.target.innerText = isLive ? "Live: ON" : "Live: OFF";
+            e.target.style.background = isLive ? "#388e3c" : "#ce9178";
+            e.target.style.color = isLive ? "white" : "#1e1e1e";
+            if(isLive) runPreview();
+        });
+
+        document.getElementById('btn-copy').addEventListener('click', () => {
+            codeInput.select();
+            document.execCommand('copy');
+            alert("Copied!");
+        });
+
+        function toggleFlash() {
+            runPreview();
+            flashOverlay.style.display = 'block';
+        }
+        document.getElementById('btn-flash').addEventListener('click', toggleFlash);
+        document.getElementById('btn-ultra-flash').addEventListener('click', toggleFlash);
+        document.getElementById('flash-close-btn').addEventListener('click', () => flashOverlay.style.display = 'none');
+
+
+        // --- ULTRA EDIT LOGIC ---
+
+        document.getElementById('btn-ultra').addEventListener('click', () => {
+            isUltraMode = true;
+            
+            const currentFile = files.find(f => f.id === currentFileId);
+            if(currentFile) currentFile.content = codeInput.value;
+
+            header.style.display = 'none';
+            subHeader.style.display = 'none';
+            ultraHeader.style.display = 'flex';
+            
+            editorContainer.style.display = 'none';
+            layerEditorContainer.style.display = 'flex';
+            
+            mainContainer.classList.add('ultra-mode');
+
+            runPreview();
+        });
+
+        document.getElementById('btn-ultra-back').addEventListener('click', () => {
+            if(confirm("Discard unsaved changes from Ultra Edit?")) {
+                exitUltraMode();
+            }
+        });
+
+        function exitUltraMode() {
+            isUltraMode = false;
+            header.style.display = 'flex';
+            subHeader.style.display = 'flex';
+            ultraHeader.style.display = 'none';
+            
+            editorContainer.style.display = 'flex';
+            layerEditorContainer.style.display = 'none';
+            
+            mainContainer.classList.remove('ultra-mode');
+            
+            loadCurrentFile();
+            runPreview();
+        }
+
+        document.getElementById('btn-ultra-update').addEventListener('click', () => {
+            const doc = previewFrame.contentDocument;
+            
+            const selected = doc.querySelector('.ultra-selected');
+            if(selected) {
+                selected.classList.remove('ultra-selected');
+                const h = selected.querySelectorAll('.resize-handle, .rotate-handle');
+                h.forEach(el => el.remove());
+            }
+
+            let newHtml = doc.body.innerHTML;
+            
+            const splitScript = '<script>\n                        // --- ULTRA EDIT LOGIC INJECTION ---';
+            if(newHtml.includes(splitScript)) {
+                newHtml = newHtml.split(splitScript)[0];
+            }
+            newHtml = newHtml.replace(/<script>[\s\S]*?<\/script>$/i, ""); 
+
+            const activeFile = files.find(f => f.id === currentFileId);
+            let targetFile = activeFile.name.endsWith('.html') ? activeFile : files.find(f => f.name.endsWith('.html'));
+            
+            if(targetFile) {
+                targetFile.content = newHtml.trim();
+                alert("Changes saved to " + targetFile.name);
+            } else {
+                alert("No HTML file found to save content.");
+            }
+
+            exitUltraMode();
+        });
+
+        document.getElementById('btn-ultra-action').addEventListener('click', (e) => {
+            isUltraActionOn = !isUltraActionOn;
+            e.target.innerText = isUltraActionOn ? "Action: ON" : "Action: OFF";
+            e.target.classList.toggle('active');
+            runPreview();
+        });
+
+        document.getElementById('btn-ultra-edit-toggle').addEventListener('click', (e) => {
+            isUltraEditOn = !isUltraEditOn;
+            e.target.innerText = isUltraEditOn ? "Edit Mode: ON" : "Edit Mode: OFF";
+            e.target.classList.toggle('active');
+            runPreview();
+        });
+
+        // --- LAYER PANEL LOGIC ---
+        function buildLayerList() {
+            layerList.innerHTML = "";
+            const doc = previewFrame.contentDocument;
+            if(!doc || !doc.body) return;
+
+            const allElements = doc.body.querySelectorAll('*');
+            
+            const visibleElements = Array.from(allElements).filter(el => 
+                !el.classList.contains('resize-handle') && 
+                !el.classList.contains('rotate-handle') &&
+                el.tagName !== 'SCRIPT'
+            );
+
+            visibleElements.forEach((el, index) => {
+                const item = document.createElement('div');
+                item.className = 'layer-item';
                 
-                iframeDoc.open();
-                iframeDoc.write(code);
-                iframeDoc.close();
-            }, 300);
+                const label = document.createElement('span');
+                label.innerText = `${el.tagName.toLowerCase()} ${el.id ? '#'+el.id : ''} ${el.className.replace('ultra-selected','').trim()}`;
+                item.appendChild(label);
+
+                const controls = document.createElement('div');
+                controls.className = 'layer-controls';
+
+                const btnUp = document.createElement('button');
+                btnUp.className = 'layer-btn';
+                btnUp.innerText = '↑';
+                btnUp.onclick = (e) => {
+                    e.stopPropagation();
+                    if(el.previousElementSibling) {
+                        el.parentNode.insertBefore(el, el.previousElementSibling);
+                        buildLayerList();
+                    }
+                };
+
+                const btnDown = document.createElement('button');
+                btnDown.className = 'layer-btn';
+                btnDown.innerText = '↓';
+                btnDown.onclick = (e) => {
+                    e.stopPropagation();
+                    if(el.nextElementSibling) {
+                        el.parentNode.insertBefore(el.nextElementSibling, el);
+                        buildLayerList();
+                    }
+                };
+
+                controls.appendChild(btnUp);
+                controls.appendChild(btnDown);
+                item.appendChild(controls);
+
+                item.addEventListener('click', () => {
+                    el.click(); // Trigger logic in iframe
+                    document.querySelectorAll('.layer-item').forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                });
+
+                layerList.appendChild(item);
+            });
         }
 
-        function closeResult() {
-            // 1. Hide Result Layer
-            resultOverlay.classList.remove('active');
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'elementSelected') {
+                // Future: Highlight layer list item based on event.data.tag
+            }
+        });
 
-            // 2. Clear Iframe
-            setTimeout(() => {
-                const iframeDoc = iframe.contentWindow.document;
-                iframeDoc.open();
-                iframeDoc.write("");
-                iframeDoc.close();
-            }, 400); 
-        }
+        // --- RESIZER LOGIC ---
+        let isResizing = false;
+        resizer.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            resizer.classList.add('resizing');
+            document.body.style.cursor = 'col-resize';
+            previewFrame.style.pointerEvents = 'none';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+            const containerWidth = mainContainer.offsetWidth;
+            const newLeftWidth = e.clientX;
+            if (newLeftWidth > 100 && newLeftWidth < containerWidth - 100) {
+                const percentage = (newLeftWidth / containerWidth) * 100;
+                if(isUltraMode) {
+                    layerEditorContainer.style.width = `${percentage}%`;
+                } else {
+                    editorContainer.style.width = `${percentage}%`;
+                }
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if(isResizing) {
+                isResizing = false;
+                resizer.classList.remove('resizing');
+                document.body.style.cursor = 'default';
+                previewFrame.style.pointerEvents = 'auto';
+            }
+        });
+
+        init();
+
     </script>
 </body>
 </html>
